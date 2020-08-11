@@ -6,6 +6,7 @@ import 'screens/search.dart';
 import 'screens/newSearch.dart';
 import 'screens/retrySearch.dart';
 import 'screens/load.dart';
+import 'package:JTNews/screens/bookmarks.dart';
 
 void main() {
   runApp(MyApp());
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
           NewSearch.id: (context) => NewSearch(),
           RetrySearch.id: (context) => RetrySearch(),
           Load.id: (context) => Load(),
+          Bookmarks.id: (context) => Bookmarks()
         });
   }
 }

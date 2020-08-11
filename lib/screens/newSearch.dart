@@ -35,41 +35,48 @@ class _NewSearchState extends State<NewSearch> {
   static String _selectedUrl =
       'http://newsapi.org/v2/top-headlines?country=ng&q=$querySearch&apiKey=$APIKey';
   DecodeSearch decoder = DecodeSearch();
+  bool con = true;
+  String conErrorMsg;
 
   void _getNews(String _selectedUrl) async {
-    _futureNews = (await fetchNews(_selectedUrl));
-    isLoading = false;
-    if (_futureNews == retry) {
-      Navigator.pushNamed(context, RetrySearch.id);
-    } else {
-      news = decoder.getData(_futureNews, source, title, content, description,
-          imageString, author, time, url, number, empty);
+    try {
+      _futureNews = (await fetchNews(_selectedUrl));
+      isLoading = false;
+      if (_futureNews == retry) {
+        Navigator.pushNamed(context, RetrySearch.id);
+      } else {
+        news = decoder.getData(_futureNews, source, title, content, description,
+            imageString, author, time, url, number, empty);
 
-      source = news[0];
-      title = news[1];
-      content = news[2];
-      description = news[3];
-      imageString = news[4];
-      author = news[5];
-      time = news[6];
-      url = news[7];
+        source = news[0];
+        title = news[1];
+        content = news[2];
+        description = news[3];
+        imageString = news[4];
+        author = news[5];
+        time = news[6];
+        url = news[7];
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Search(
-                  author: author,
-                  source: source,
-                  title: title,
-                  content: content,
-                  description: description,
-                  imageString: imageString,
-                  time: time,
-                  url: url,
-                  query: querySearch,
-                  pop: pop,
-                )),
-      );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Search(
+                    author: author,
+                    source: source,
+                    title: title,
+                    content: content,
+                    description: description,
+                    imageString: imageString,
+                    time: time,
+                    url: url,
+                    query: querySearch,
+                    pop: pop,
+                  )),
+        );
+      }
+    } catch (e) {
+      con = false;
+      conErrorMsg = e.toString();
     }
   }
 
@@ -97,24 +104,35 @@ class _NewSearchState extends State<NewSearch> {
               ),
             )),
         actions: <Widget>[
-          isLoading ? CircularProgressIndicator() :
-          FlatButton(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-              side: BorderSide(color: Colors.white70, width: 4.0),
-            ),
-            child: Text('Search',
-                style: TextStyle(color: Colors.white70, fontSize: 18.0)),
-            onPressed: () {
-              isLoading = true;
-              _getNews(_selectedUrl);
-            },
-          ),
+          isLoading
+              ? CircularProgressIndicator()
+              : FlatButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    side: BorderSide(color: Colors.white70, width: 4.0),
+                  ),
+                  child: Text('Search',
+                      style: TextStyle(color: Colors.white70, fontSize: 18.0)),
+                  onPressed: () {
+                    isLoading = true;
+                    _getNews(_selectedUrl);
+                  },
+                ),
         ],
       ),
       body: SafeArea(
         child: Center(
-          child: Container(),
+          child: Container(
+            child: con
+                ? Container()
+                : RaisedButton(
+                    child: Text('RETRY, CONNECTION ERROR: ($conErrorMsg)'),
+                    onPressed: () {
+                      con = true;
+                      _getNews(_selectedUrl);
+                    },
+                  ),
+          ),
         ),
       ),
     );

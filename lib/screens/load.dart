@@ -33,45 +33,52 @@ class _LoadState extends State<Load> {
   static String selectedUrl =
       'http://newsapi.org/v2/top-headlines?country=ng&apiKey=$APIKey';
   DecodeSearch decoder = DecodeSearch();
+  bool con = true;
+  String conErrorMsg;
 
   void _getNews(String selectedUrl) async {
-    futureNews = (await fetchNews(selectedUrl));
-    if (futureNews == retry) {
-      _statusText = retry;
-      _isInAsyncCall = false;
-    } else {
-      news = decoder.getData(futureNews, source, title, content, description,
-          imageString, author, time, url, number, empty);
+    try {
+      futureNews = (await fetchNews(selectedUrl));
+      if (futureNews == retry) {
+        _statusText = retry;
+        _isInAsyncCall = false;
+      } else {
+        news = decoder.getData(futureNews, source, title, content, description,
+            imageString, author, time, url, number, empty);
 
-      source = news[0];
-      title = news[1];
-      content = news[2];
-      description = news[3];
-      imageString = news[4];
-      author = news[5];
-      time = news[6];
-      url = news[7];
+        source = news[0];
+        title = news[1];
+        content = news[2];
+        description = news[3];
+        imageString = news[4];
+        author = news[5];
+        time = news[6];
+        url = news[7];
 
-      _isInAsyncCall = false;
+        _isInAsyncCall = false;
 
-      int count = 0;
+        int count = 0;
 
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Home(
-              author: author,
-              source: source,
-              title: title,
-              content: content,
-              description: description,
-              imageString: imageString,
-              time: time,
-              url: url,
-            ),
-          ), (route) {
-        return count++ == 1;
-      });
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Home(
+                author: author,
+                source: source,
+                title: title,
+                content: content,
+                description: description,
+                imageString: imageString,
+                time: time,
+                url: url,
+              ),
+            ), (route) {
+          return count++ == 1;
+        });
+      }
+    } catch (e) {
+      con = false;
+      conErrorMsg = e.toString();
     }
   }
 
@@ -89,20 +96,29 @@ class _LoadState extends State<Load> {
       opacity: 0.05,
       // progressIndicator: CircularProgressIndicator(),
       child: Scaffold(
-          appBar: AppBar(title: Text('JTNews')),
-          body: SafeArea(
-            child: Center(
-              child: Container(
-                child: RaisedButton(
-                  onPressed: () {
-                    _isInAsyncCall = true;
-                    _getNews(selectedUrl);
-                  },
-                  child: Text(_statusText),
-                ),
-              ),
+        appBar: AppBar(title: Text('JTNews')),
+        body: SafeArea(
+          child: Center(
+            child: Container(
+              child: con
+                  ? RaisedButton(
+                      onPressed: () {
+                        _isInAsyncCall = true;
+                        _getNews(selectedUrl);
+                      },
+                      child: Text(_statusText),
+                    )
+                  : RaisedButton(
+                      child: Text('RETRY, CONNECTION ERROR: ($conErrorMsg)'),
+                      onPressed: () {
+                        con = true;
+                        _getNews(selectedUrl);
+                      },
+                    ),
             ),
-          )),
+          ),
+        ),
+      ),
     );
   }
 }

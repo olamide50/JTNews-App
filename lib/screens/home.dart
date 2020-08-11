@@ -51,25 +51,32 @@ class _HomeState extends State<Home> {
   List<Object> news = [];
   int number = pageSize;
   String empty = 'No info';
+  bool con = true;
+  String conErrorMsg = '';
 
   DecodeSearch decoder = DecodeSearch();
 
   void _getNews() async {
-    _futureNews = (await fetchNews(selectedUrl));
-    if (_futureNews == retry) {
-      Navigator.pushNamed(context, Load.id);
-    } else {
-      news = decoder.getData(_futureNews, source, title, content, description,
-          imageString, author, time, url, number, empty);
+    try {
+      _futureNews = (await fetchNews(selectedUrl));
+      if (_futureNews == retry) {
+        Navigator.pushNamed(context, Load.id);
+      } else {
+        news = decoder.getData(_futureNews, source, title, content, description,
+            imageString, author, time, url, number, empty);
 
-      source = news[0];
-      title = news[1];
-      content = news[2];
-      description = news[3];
-      imageString = news[4];
-      author = news[5];
-      time = news[6];
-      url = news[7];
+        source = news[0];
+        title = news[1];
+        content = news[2];
+        description = news[3];
+        imageString = news[4];
+        author = news[5];
+        time = news[6];
+        url = news[7];
+      }
+    } catch (e) {
+      con = false;
+      conErrorMsg = e.toString();
     }
   }
 
@@ -169,31 +176,41 @@ class _HomeState extends State<Home> {
         direction: Axis.vertical,
         children: <Widget>[
           Expanded(
-            child: CustomListView(
-                source: source,
-                title: title,
-                content: content,
-                description: description,
-                imageString: imageString,
-                author: author,
-                time: time,
-                url: url,
-                onTap: (index) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ArticleView(
-                        author: author[index],
-                        title: title[index],
-                        content: content[index],
-                        description: description[index],
-                        imageUrl: imageString[index],
-                        time: time[index],
-                        url: url[index],
-                      ),
-                    ),
-                  );
-                }),
+            child: con
+                ? CustomListView(
+                    source: source,
+                    title: title,
+                    content: content,
+                    description: description,
+                    imageString: imageString,
+                    author: author,
+                    time: time,
+                    url: url,
+                    onTap: (index) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ArticleView(
+                            author: author[index],
+                            title: title[index],
+                            content: content[index],
+                            description: description[index],
+                            imageUrl: imageString[index],
+                            time: time[index],
+                            url: url[index],
+                          ),
+                        ),
+                      );
+                    })
+                : Center(
+                    child: Container(
+                        child: RaisedButton(
+                    child: Text('RETRY, CONNECTION ERROR: ($conErrorMsg)'),
+                    onPressed: () {
+                      con = true;
+                      _getNews();
+                    },
+                  ))),
           ),
         ],
       )),

@@ -63,47 +63,59 @@ class _SearchState extends State<Search> {
   String selectedUrl;
 
   DecodeSearch decoder = DecodeSearch();
+  bool con = true;
+  String conErrorMsg;
+  int count = 0;
 
   Future<void> _getNews() async {
-    _futureNews = (await fetchNews(selectedUrl));
-    isLoading = false;
-    if (_futureNews == retry) {
-      Navigator.pushNamed(context, RetrySearch.id);
-    } else {
-      print(_futureNews);
-      news = decoder.getData(_futureNews, source, title, content, description,
-          imageString, author, time, url, number, empty);
-
-      if (news == null) {
+    try {
+      _futureNews = (await fetchNews(selectedUrl));
+      isLoading = false;
+      if (_futureNews == retry) {
         Navigator.pushNamed(context, RetrySearch.id);
       } else {
-        source = news[0];
-        title = news[1];
-        content = news[2];
-        description = news[3];
-        imageString = news[4];
-        author = news[5];
-        time = news[6];
-        url = news[7];
-        number = news[8];
+        print(_futureNews);
+        news = decoder.getData(_futureNews, source, title, content, description,
+            imageString, author, time, url, number, empty);
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
+        if (news == null) {
+          Navigator.pushNamed(context, RetrySearch.id);
+        } else {
+          source = news[0];
+          title = news[1];
+          content = news[2];
+          description = news[3];
+          imageString = news[4];
+          author = news[5];
+          time = news[6];
+          url = news[7];
+          number = news[8];
+
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
               builder: (context) => Search(
-                    author: author,
-                    source: source,
-                    title: title,
-                    content: content,
-                    description: description,
-                    imageString: imageString,
-                    time: time,
-                    url: url,
-                    query: querySearch,
-                    pop: pop,
-                  )),
-        );
+                author: author,
+                source: source,
+                title: title,
+                content: content,
+                description: description,
+                imageString: imageString,
+                time: time,
+                url: url,
+                query: querySearch,
+                pop: pop,
+              ),
+            ),
+            (route) {
+              return count++ == pop + 1;
+            },
+          );
+        }
       }
+    } catch (e) {
+      con = false;
+      conErrorMsg = e.toString();
     }
   }
 
@@ -117,17 +129,18 @@ class _SearchState extends State<Search> {
   @override
   void initState() {
     super.initState();
-    querySearch = widget.query;
-    source = widget.source;
-    title = widget.title;
-    content = widget.content;
-    description = widget.description;
-    imageString = widget.imageString;
-    author = widget.author;
-    time = widget.time;
-    url = widget.url;
-    pop = widget.pop + 1;
     setState(() {
+      querySearch = widget.query;
+      source = widget.source;
+      title = widget.title;
+      content = widget.content;
+      description = widget.description;
+      imageString = widget.imageString;
+      author = widget.author;
+      time = widget.time;
+      url = widget.url;
+      pop = widget.pop + 1;
+
       searchController.text = widget.query;
     });
   }
@@ -179,31 +192,44 @@ class _SearchState extends State<Search> {
         child: Center(
           child: Container(
               child: Expanded(
-            child: isLoading? CircularProgressIndicator() : CustomListView(
-                source: source,
-                title: title,
-                content: content,
-                description: description,
-                imageString: imageString,
-                author: author,
-                time: time,
-                url: url,
-                onTap: (index) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ArticleView(
-                        author: author[index],
-                        title: title[index],
-                        content: content[index],
-                        description: description[index],
-                        imageUrl: imageString[index],
-                        time: time[index],
-                        url: url[index],
-                      ),
-                    ),
-                  );
-                }),
+            child: isLoading
+                ? CircularProgressIndicator()
+                : con
+                    ? Container(
+                        child: RaisedButton(
+                          child:
+                              Text('RETRY, CONNECTION ERROR: ($conErrorMsg)'),
+                          onPressed: () {
+                            con = true;
+                            _getNews();
+                          },
+                        ),
+                      )
+                    : CustomListView(
+                        source: source,
+                        title: title,
+                        content: content,
+                        description: description,
+                        imageString: imageString,
+                        author: author,
+                        time: time,
+                        url: url,
+                        onTap: (index) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ArticleView(
+                                author: author[index],
+                                title: title[index],
+                                content: content[index],
+                                description: description[index],
+                                imageUrl: imageString[index],
+                                time: time[index],
+                                url: url[index],
+                              ),
+                            ),
+                          );
+                        }),
           )),
         ),
       ),
