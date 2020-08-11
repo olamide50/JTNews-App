@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+/* import 'package:JTNews/news.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart'; */
 
 class AppBarText extends StatelessWidget {
   AppBarText({@required this.title});
@@ -25,6 +28,9 @@ class CustomListTile extends StatelessWidget {
       this.newsDetails,
       @required this.newsTime,
       @required this.newsSource,
+      @required this.newsAuthor,
+      @required this.newsUrl,
+      @required this.newsContent,
       @required this.onPressed,
       @required this.onLongPressed});
 
@@ -33,6 +39,9 @@ class CustomListTile extends StatelessWidget {
   final String newsDetails;
   final String newsSource;
   final String newsTime;
+  final String newsAuthor;
+  final String newsContent;
+  final String newsUrl;
   final Function onPressed;
   final Function onLongPressed;
 
@@ -49,14 +58,24 @@ class CustomListTile extends StatelessWidget {
     String time =
         new DateFormat('MMM d, h:mm a').format(DateTime.parse(newsTime));
 
+    final Color colorDefault = Colors.black38;
+    Color color = colorDefault;
+
     return ListTile(
       contentPadding: EdgeInsets.all(15.0),
       leading: img,
       title: Text(newsTitle),
       subtitle: Text('$time'),
       trailing: IconButton(
-          icon: FaIcon(FontAwesomeIcons.star, color: Colors.black26),
-          onPressed: () {}),
+          icon: FaIcon(FontAwesomeIcons.star, color: color),
+          onPressed: () {
+            if (color == colorDefault) {
+              
+              {
+                color = Colors.yellow;
+              }
+            }
+          }),
       onTap: () {
         onPressed();
       },
@@ -140,6 +159,9 @@ class CustomListView extends StatelessWidget {
             newsDetails: description[index],
             newsSource: source[index],
             newsTime: time[index],
+            newsAuthor: author[index],
+            newsContent: content[index],
+            newsUrl: url[index],
             onPressed: () {
               onTap(index);
             },
