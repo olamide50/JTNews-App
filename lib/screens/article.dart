@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:JTNews/custom_widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:share/share.dart';
 
 class ArticleView extends StatelessWidget {
   static String id = 'article_screen';
@@ -30,7 +31,11 @@ class ArticleView extends StatelessWidget {
         appBar: AppBar(
           title: AppBarText(title: ArticleView.headerText),
           actions: <Widget>[
-            IconButton(icon: FaIcon(FontAwesomeIcons.shareAlt), onPressed: () {})
+            IconButton(
+                icon: FaIcon(FontAwesomeIcons.shareAlt),
+                onPressed: () {
+                  Share.share(title, subject: 'Breaking news: ');
+                })
           ],
         ),
         body: SafeArea(
