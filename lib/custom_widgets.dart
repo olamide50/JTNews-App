@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:JTNews/news.dart';
-import 'screens/bookmarks.dart';
 import 'package:better_uuid/uuid.dart';
 import 'database.dart';
 

@@ -4,7 +4,6 @@ import 'package:JTNews/database.dart';
 import 'article.dart';
 import 'package:JTNews/news.dart';
 import 'dart:async';
-import 'package:sqflite/sqflite.dart';
 
 class Bookmarks extends StatefulWidget {
   static String id = 'bookmarks';
