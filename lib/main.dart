@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'screens/home.dart';
 import 'screens/article.dart';
 import 'screens/settings.dart';
-import 'screens/search.dart';
 import 'screens/newSearch.dart';
 import 'screens/retrySearch.dart';
 import 'screens/load.dart';
@@ -39,7 +38,6 @@ class MyApp extends StatelessWidget {
           Home.id: (context) => Home(),
           ArticleView.id: (context) => ArticleView(),
           Settings.id: (context) => Settings(),
-          Search.id: (context) => Search(),
           NewSearch.id: (context) => NewSearch(),
           RetrySearch.id: (context) => RetrySearch(),
           Load.id: (context) => Load(),

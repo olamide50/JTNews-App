@@ -134,7 +134,21 @@ class _HomeState extends State<Home> {
           IconButton(
               icon: FaIcon(FontAwesomeIcons.search),
               onPressed: () {
-                Navigator.pushNamed((context), NewSearch.id);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NewSearch(
+                      author: author,
+                      source: source,
+                      title: title,
+                      content: content,
+                      description: description,
+                      imageString: imageString,
+                      time: time,
+                      url: url,
+                    ),
+                  ),
+                );
               }),
         ],
       ),
@@ -178,7 +192,7 @@ class _HomeState extends State<Home> {
           Expanded(
             child: con
                 ? CustomListView(
-                  selector: 1,
+                    selector: 1,
                     source: source,
                     title: title,
                     content: content,
