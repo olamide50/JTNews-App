@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:JTNews/news.dart';
-import 'dart:async';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'screens/bookmarks.dart';
 import 'package:better_uuid/uuid.dart';
+import 'database.dart';
 
 class AppBarText extends StatelessWidget {
   AppBarText({@required this.title});
@@ -75,36 +74,6 @@ class _CustomListTileState extends State<CustomListTile> {
           icon: FaIcon(FontAwesomeIcons.star, color: color),
           onPressed: () async {
             try {
-              final Future<Database> database = openDatabase(
-                // Set the path to the database.
-                join(await getDatabasesPath(), 'articles_database.db'),
-                // When the database is first created, create a table to store dogs.
-                onCreate: (db, version) {
-                  // Run the CREATE TABLE statement on the database.
-                  return db.execute(
-                    "CREATE TABLE news(id INTEGER PRIMARY KEY, source TEXT, title TEXT, content TEXT, description TEXT, imageString TEXT, author TEXT, time TEXT, url TEXT)",
-                  );
-                },
-                // Set the version. This executes the onCreate function and provides a
-                // path to perform database upgrades and downgrades.
-                version: 1,
-              );
-
-              Future<void> insertNews(News news) async {
-                // Get a reference to the database.
-                final Database db = await database;
-
-                // Insert the Dog into the correct table. You might also specify the
-                // `conflictAlgorithm` to use in case the same dog is inserted twice.
-                //
-                // In this case, replace any previous data.
-                await db.insert(
-                  'news',
-                  news.toMap(),
-                  conflictAlgorithm: ConflictAlgorithm.replace,
-                );
-              }
-
               var id = Uuid.v1();
               final article = News(
                   id: id.time,
@@ -136,6 +105,10 @@ class _CustomListTileState extends State<CustomListTile> {
 
               // Find the Scaffold in the widget tree and use it to show a SnackBar.
               Scaffold.of(context).showSnackBar(snackBar);
+              print(e.toString());
+              setState(() {
+                
+              });
             }
           }),
       onTap: () {
@@ -195,6 +168,8 @@ class CustomListView extends StatelessWidget {
   final List<String> url;
   final String empty = 'No info';
   final Function onTap;
+  final int selector;
+  final List<int> id;
 
   CustomListView({
     @required this.source,
@@ -206,6 +181,8 @@ class CustomListView extends StatelessWidget {
     @required this.time,
     @required this.url,
     @required this.onTap,
+    @required this.selector,
+    this.id,
   });
 
   @override
@@ -213,21 +190,123 @@ class CustomListView extends StatelessWidget {
     return ListView.separated(
       itemCount: title.length,
       separatorBuilder: (BuildContext context, int index) =>
-          Divider(height: 5.0, color: Colors.grey),
+          Divider(height: 10.0, color: Colors.grey),
       itemBuilder: (BuildContext context, int index) {
-        return CustomListTile(
-            newsImage: imageString[index],
-            newsTitle: title[index],
-            newsDetails: description[index],
-            newsSource: source[index],
-            newsTime: time[index],
-            newsAuthor: author[index],
-            newsContent: content[index],
-            newsUrl: url[index],
-            onPressed: () {
-              onTap(index);
-            },
-            onLongPressed: null);
+        return selector == 1
+            ? CustomListTile(
+                newsImage: imageString[index],
+                newsTitle: title[index],
+                newsDetails: description[index],
+                newsSource: source[index],
+                newsTime: time[index],
+                newsAuthor: author[index],
+                newsContent: content[index],
+                newsUrl: url[index],
+                onPressed: () {
+                  onTap(index);
+                },
+                onLongPressed: null)
+            : BookmarkListTile(
+                id: id[index],
+                newsImage: imageString[index],
+                newsTitle: title[index],
+                newsDetails: description[index],
+                newsSource: source[index],
+                newsTime: time[index],
+                newsAuthor: author[index],
+                newsContent: content[index],
+                newsUrl: url[index],
+                onPressed: () {
+                  onTap(index);
+                },
+                onLongPressed: null);
+      },
+    );
+  }
+}
+
+class BookmarkListTile extends StatefulWidget {
+  BookmarkListTile(
+      {this.newsImage,
+      @required this.newsTitle,
+      this.newsDetails,
+      @required this.newsTime,
+      @required this.newsSource,
+      @required this.newsAuthor,
+      @required this.newsUrl,
+      @required this.newsContent,
+      @required this.onPressed,
+      @required this.onLongPressed,
+      @required this.id});
+
+  final String newsImage;
+  final String newsTitle;
+  final String newsDetails;
+  final String newsSource;
+  final String newsTime;
+  final String newsAuthor;
+  final String newsContent;
+  final String newsUrl;
+  final Function onPressed;
+  final Function onLongPressed;
+  final int id;
+
+  @override
+  BookmarkListTileState createState() => BookmarkListTileState();
+}
+
+class BookmarkListTileState extends State<BookmarkListTile> {
+  static Color colorDefault = Colors.black38;
+  Color color = colorDefault;
+  @override
+  Widget build(BuildContext context) {
+    String altImage =
+        'https://businessday.ng/wp-content/uploads/2019/10/BusinessDay-news-2-750x430.jpg';
+    Image img;
+    if (widget.newsImage == 'No info') {
+      img = Image.network(altImage, height: 55.0, width: 55.0);
+    } else {
+      img = Image.network(widget.newsImage, height: 55.0, width: 55.0);
+    }
+    String time =
+        new DateFormat('MMM d, h:mm a').format(DateTime.parse(widget.newsTime));
+
+    return ListTile(
+      contentPadding: EdgeInsets.all(15.0),
+      leading: img,
+      title: Text(widget.newsTitle),
+      subtitle: Text('$time'),
+      trailing: IconButton(
+          icon: FaIcon(FontAwesomeIcons.trash, color: color),
+          onPressed: () async {
+            try {
+              await deleteNews(widget.id);
+
+              final snackBar = SnackBar(content: Text('Succesfully deleted!'));
+
+// Find the Scaffold in the widget tree and use it to show a SnackBar.
+              Scaffold.of(context).showSnackBar(snackBar);
+              // Navigator.pushNamed(context, Bookmarks.id);
+              setState(() {
+                
+              });
+            } catch (e) {
+              final snackBar = SnackBar(content: Text('Error deleting'));
+
+              // Find the Scaffold in the widget tree and use it to show a SnackBar.
+              Scaffold.of(context).showSnackBar(snackBar);
+              print(e.toString());
+
+               setState(() {
+                
+              });
+            }
+          }),
+      onTap: () {
+        widget.onPressed();
+      },
+      onLongPress: () {
+        widget.onLongPressed();
       },
     );
   }

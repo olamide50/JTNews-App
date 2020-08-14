@@ -138,7 +138,7 @@ class _HomeState extends State<Home> {
               }),
         ],
       ),
-      drawer: drawerWidget,
+      drawer: drawerWidget(context),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
@@ -178,6 +178,7 @@ class _HomeState extends State<Home> {
           Expanded(
             child: con
                 ? CustomListView(
+                  selector: 1,
                     source: source,
                     title: title,
                     content: content,

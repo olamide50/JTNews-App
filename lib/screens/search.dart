@@ -206,6 +206,7 @@ class _SearchState extends State<Search> {
                         ),
                       )
                     : CustomListView(
+                      selector: 1,
                         source: source,
                         title: title,
                         content: content,

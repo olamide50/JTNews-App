@@ -17,9 +17,18 @@ class _SettingsState extends State<Settings> {
         appBar: AppBar(
           title: (AppBarText(title: Settings.headerText)),
         ),
-        drawer: drawerWidget,
-        body: Container(
-          child: ListView(),
+        drawer: drawerWidget(context),
+        body: SafeArea(
+          child: Center(
+            child: Container(child: Column(children: <Widget>[
+              Text('This Demo News App is made by'),
+              Text('JTAppSoft International'),
+              Text('Developer: '),
+              Text('Olalekan Olamide'),
+              Text('Source Code:'),
+              Text('https://github.com/olamide50/JTNews-App')
+            ],))
+          ),
         ));
   }
 }

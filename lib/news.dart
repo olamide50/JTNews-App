@@ -26,7 +26,7 @@ class News {
       'source': source,
       'title': title,
       'content': content,
-      'descripton': description,
+      'description': description,
       'imageString': imageString,
       'author': author,
       'time': time,
