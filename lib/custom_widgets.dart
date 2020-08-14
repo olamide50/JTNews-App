@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:JTNews/news.dart';
 import 'package:better_uuid/uuid.dart';
 import 'database.dart';
+import 'screens/bookmarks.dart';
 
 class AppBarText extends StatelessWidget {
   AppBarText({@required this.title});
@@ -105,9 +106,7 @@ class _CustomListTileState extends State<CustomListTile> {
               // Find the Scaffold in the widget tree and use it to show a SnackBar.
               Scaffold.of(context).showSnackBar(snackBar);
               print(e.toString());
-              setState(() {
-                
-              });
+              setState(() {});
             }
           }),
       onTap: () {
@@ -189,7 +188,7 @@ class CustomListView extends StatelessWidget {
     return ListView.separated(
       itemCount: title.length,
       separatorBuilder: (BuildContext context, int index) =>
-          Divider(height: 10.0, color: Colors.grey),
+          Divider(height: 20.0, color: Colors.grey),
       itemBuilder: (BuildContext context, int index) {
         return selector == 1
             ? CustomListTile(
@@ -281,14 +280,12 @@ class BookmarkListTileState extends State<BookmarkListTile> {
             try {
               await deleteNews(widget.id);
 
-              final snackBar = SnackBar(content: Text('Succesfully deleted!'));
-
-// Find the Scaffold in the widget tree and use it to show a SnackBar.
-              Scaffold.of(context).showSnackBar(snackBar);
               // Navigator.pushNamed(context, Bookmarks.id);
               setState(() {
+                Navigator.popAndPushNamed(context, Bookmarks.id);
                 
               });
+              
             } catch (e) {
               final snackBar = SnackBar(content: Text('Error deleting'));
 
@@ -296,9 +293,7 @@ class BookmarkListTileState extends State<BookmarkListTile> {
               Scaffold.of(context).showSnackBar(snackBar);
               print(e.toString());
 
-               setState(() {
-                
-              });
+              setState(() {});
             }
           }),
       onTap: () {

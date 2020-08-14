@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:JTNews/const.dart';
 import 'package:JTNews/custom_widgets.dart';
 
 class Settings extends StatefulWidget {
@@ -17,7 +16,6 @@ class _SettingsState extends State<Settings> {
         appBar: AppBar(
           title: (AppBarText(title: Settings.headerText)),
         ),
-        drawer: drawerWidget(context),
         body: SafeArea(
           child: Center(
             child: Container(child: Column(children: <Widget>[

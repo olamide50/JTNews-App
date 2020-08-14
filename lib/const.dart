@@ -27,7 +27,7 @@ Widget drawerWidget(BuildContext context) {
         CustomFlatButton(
           text: 'Bookmarks',
           onTap: () {
-            Navigator.pushNamed(context, Bookmarks.id);
+            Navigator.popAndPushNamed(context, Bookmarks.id);
           },
           icon: FaIcon(
             FontAwesomeIcons.star,
@@ -38,7 +38,7 @@ Widget drawerWidget(BuildContext context) {
         CustomFlatButton(
           text: 'Settings',
           onTap: () {
-            Navigator.pushNamed(context, Settings.id);
+            Navigator.popAndPushNamed(context, Settings.id);
           },
           icon: FaIcon(
             FontAwesomeIcons.cog,
