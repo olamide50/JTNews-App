@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:JTNews/custom_widgets.dart';
+import 'package:JTNews/database.dart';
 
 class Bookmarks extends StatefulWidget {
   static String id = 'bookmarks';
