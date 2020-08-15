@@ -8,6 +8,8 @@ import 'article.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:JTNews/decodeSearch.dart';
 import 'load.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'dart:async';
 
 // ignore: must_be_immutable
 class Home extends StatefulWidget {
@@ -121,7 +123,37 @@ class _HomeState extends State<Home> {
       } else {
         selectedUrl = urlHlt;
       }
+      _scrollController = new ScrollController();
       _getNews();
+    });
+  }
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<LiquidPullToRefreshState> _refreshIndicatorKey =
+      GlobalKey<LiquidPullToRefreshState>();
+
+  static int refreshNum = 10; // number that changes when refreshed
+  Stream<int> counterStream =
+      Stream<int>.periodic(Duration(seconds: 3), (x) => refreshNum);
+
+  ScrollController _scrollController;
+
+  Future<void> _handleRefresh() {
+    final Completer<void> completer = Completer<void>();
+    Timer(const Duration(seconds: 3), () {
+      completer.complete();
+    });
+    setState(() {
+      _getNews();
+    });
+    return completer.future.then<void>((_) {
+      _scaffoldKey.currentState?.showSnackBar(SnackBar(
+          content: const Text('Refresh complete'),
+          action: SnackBarAction(
+              label: 'RETRY',
+              onPressed: () {
+                _refreshIndicatorKey.currentState.show();
+              })));
     });
   }
 
@@ -191,32 +223,38 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           Expanded(
             child: con
-                ? CustomListView(
-                    selector: 1,
-                    source: source,
-                    title: title,
-                    content: content,
-                    description: description,
-                    imageString: imageString,
-                    author: author,
-                    time: time,
-                    url: url,
-                    onTap: (index) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ArticleView(
-                            author: author[index],
-                            title: title[index],
-                            content: content[index],
-                            description: description[index],
-                            imageUrl: imageString[index],
-                            time: time[index],
-                            url: url[index],
-                          ),
-                        ),
-                      );
-                    })
+                ? LiquidPullToRefresh(
+                    showChildOpacityTransition: false,
+                    key: _refreshIndicatorKey, // key if you want to add
+                    onRefresh: _handleRefresh, // refresh callback
+                    child: CustomListView(
+                        myController: _scrollController,
+                        selector: 1,
+                        source: source,
+                        title: title,
+                        content: content,
+                        description: description,
+                        imageString: imageString,
+                        author: author,
+                        time: time,
+                        url: url,
+                        onTap: (index) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ArticleView(
+                                author: author[index],
+                                title: title[index],
+                                content: content[index],
+                                description: description[index],
+                                imageUrl: imageString[index],
+                                time: time[index],
+                                url: url[index],
+                              ),
+                            ),
+                          );
+                        }),
+                  )
                 : Center(
                     child: Container(
                         child: RaisedButton(

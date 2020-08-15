@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
             ),
         themedWidgetBuilder: (context, theme) {
           return MaterialApp(
+              debugShowCheckedModeBanner: false,
               title: 'Flutter Demo',
               theme: theme,
               initialRoute: Load.id,

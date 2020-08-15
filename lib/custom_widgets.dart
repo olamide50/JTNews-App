@@ -168,6 +168,7 @@ class CustomListView extends StatelessWidget {
   final Function onTap;
   final int selector;
   final List<int> id;
+  final ScrollController myController;
 
   CustomListView({
     @required this.source,
@@ -180,12 +181,14 @@ class CustomListView extends StatelessWidget {
     @required this.url,
     @required this.onTap,
     @required this.selector,
+    this.myController,
     this.id,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+      controller: myController,
       itemCount: title.length,
       separatorBuilder: (BuildContext context, int index) =>
           Divider(height: 20.0, color: Colors.grey),

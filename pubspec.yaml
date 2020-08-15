@@ -33,6 +33,7 @@ dependencies:
   dynamic_theme: ^1.0.1
   flutter_local_notifications: ^1.4.4+3
   splashscreen: ^1.2.0
+  liquid_pull_to_refresh: ^2.0.0
 
   flutter:
     sdk: flutter
