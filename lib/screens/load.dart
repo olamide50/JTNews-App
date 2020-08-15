@@ -4,7 +4,8 @@ import 'package:JTNews/decodeSearch.dart';
 import 'package:JTNews/const.dart';
 import 'package:JTNews/secret.dart';
 import 'home.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:splashscreen/splashscreen.dart';
+import 'loadError.dart';
 
 class Load extends StatefulWidget {
   static String id = 'load_screen';
@@ -13,10 +14,6 @@ class Load extends StatefulWidget {
 }
 
 class _LoadState extends State<Load> {
-  String _statusText = loading;
-
-  bool _isInAsyncCall = true;
-
   String futureNews;
   static int pageSize = 20;
   List<String> source = [];
@@ -40,8 +37,7 @@ class _LoadState extends State<Load> {
     try {
       futureNews = (await fetchNews(selectedUrl));
       if (futureNews == retry) {
-        _statusText = retry;
-        _isInAsyncCall = false;
+        Navigator.popAndPushNamed(context, LoadError.id);
       } else {
         news = decoder.getData(futureNews, source, title, content, description,
             imageString, author, time, url, number, empty);
@@ -54,9 +50,6 @@ class _LoadState extends State<Load> {
         author = news[5];
         time = news[6];
         url = news[7];
-
-        _isInAsyncCall = false;
-
         int count = 0;
 
         Navigator.pushAndRemoveUntil(
@@ -90,34 +83,20 @@ class _LoadState extends State<Load> {
 
   @override
   Widget build(BuildContext context) {
-    return ModalProgressHUD(
-      inAsyncCall: _isInAsyncCall,
-      // demo of some additional parameters
-      opacity: 0.05,
-      // progressIndicator: CircularProgressIndicator(),
-      child: Scaffold(
-        appBar: AppBar(title: Text('JTNews')),
-        body: SafeArea(
-          child: Center(
-            child: Container(
-              child: con
-                  ? RaisedButton(
-                      onPressed: () {
-                        _isInAsyncCall = true;
-                        _getNews(selectedUrl);
-                      },
-                      child: Text(_statusText),
-                    )
-                  : RaisedButton(
-                      child: Text('RETRY, CONNECTION ERROR: ($conErrorMsg)'),
-                      onPressed: () {
-                        con = true;
-                        _getNews(selectedUrl);
-                      },
-                    ),
+    return Scaffold(
+      body: SafeArea(
+        child: SplashScreen(
+            seconds: 5,
+            title: new Text(
+              'JTNews Demo',
+              style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
             ),
-          ),
-        ),
+            image: new Image.asset('assets/images/jtnews.png'),
+            backgroundColor: Colors.indigo,
+            styleTextUnderTheLoader: new TextStyle(),
+            photoSize: 100.0,
+            loadingText: Text('Loading...'),
+            loaderColor: Colors.red),
       ),
     );
   }

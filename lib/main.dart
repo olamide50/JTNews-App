@@ -8,6 +8,7 @@ import 'screens/load.dart';
 import 'package:JTNews/screens/bookmarks.dart';
 import 'package:preferences/preferences.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:JTNews/screens/loadError.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +45,8 @@ class MyApp extends StatelessWidget {
                 NewSearch.id: (context) => NewSearch(),
                 RetrySearch.id: (context) => RetrySearch(),
                 Load.id: (context) => Load(),
-                Bookmarks.id: (context) => Bookmarks()
+                Bookmarks.id: (context) => Bookmarks(),
+                LoadError.id: (context) => LoadError(),
               });
         });
   }
