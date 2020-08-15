@@ -41,7 +41,7 @@ class ArticleView extends StatelessWidget {
         body: SafeArea(
           child: Container(
             padding: EdgeInsets.all(10.0),
-            color: Color(0xFFFBFCE1),
+            color: Colors.white70,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -156,33 +156,33 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
-        iconSize: 10.0,
+        iconSize: 20.0,
         items: [
           // this will be set when a new tab is tapped
 
           BottomNavigationBarItem(
             icon: Icon(Icons.library_books),
-            title: Text('All'),
+            title: Text('All', style: bottomTextStyle),
             // backgroundColor: Colors.lightBlue
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_balance),
-            title: Text('Business'),
+            title: Text('Business', style: bottomTextStyle),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.accessible_forward),
-            title: Text('Sports'),
+            title: Text('Sports', style: bottomTextStyle),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add_box),
-            title: Text('Health'),
+            title: Text('Health', style: bottomTextStyle),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.theaters),
-            title: Text('Entertainment'),
+            title: Text('Ent.', style: bottomTextStyle),
           ),
         ],
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.indigo[800],
         onTap: _onItemTapped,
       ),
       body: SafeArea(

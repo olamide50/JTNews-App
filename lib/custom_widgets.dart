@@ -283,9 +283,7 @@ class BookmarkListTileState extends State<BookmarkListTile> {
               // Navigator.pushNamed(context, Bookmarks.id);
               setState(() {
                 Navigator.popAndPushNamed(context, Bookmarks.id);
-                
               });
-              
             } catch (e) {
               final snackBar = SnackBar(content: Text('Error deleting'));
 
@@ -305,3 +303,9 @@ class BookmarkListTileState extends State<BookmarkListTile> {
     );
   }
 }
+
+final bottomTextStyle = TextStyle(
+  color: Colors.indigo[800],
+  fontSize: 16.0,
+  fontWeight: FontWeight.w600,
+);

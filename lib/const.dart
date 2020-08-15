@@ -24,6 +24,7 @@ Widget drawerWidget(BuildContext context) {
             color: Colors.blue,
           ),
         ),
+        SizedBox(height: 20.0),
         CustomFlatButton(
           text: 'Bookmarks',
           onTap: () {
@@ -49,3 +50,5 @@ Widget drawerWidget(BuildContext context) {
     ),
   );
 }
+
+

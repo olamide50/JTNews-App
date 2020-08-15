@@ -6,42 +6,46 @@ import 'screens/newSearch.dart';
 import 'screens/retrySearch.dart';
 import 'screens/load.dart';
 import 'package:JTNews/screens/bookmarks.dart';
+import 'package:preferences/preferences.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 
-void main() {
+main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await PrefService.init(prefix: 'pref_');
+
+  PrefService.setDefaultValues({
+    'dev': 'JTAppSoft International 2020 \u00a9',
+    'email': 'Email: lekansbox1@gmail.com',
+    'phone': 'Phone: +234-7050430600',
+  });
+
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          primarySwatch: Colors.blue,
-          // This makes the visual density adapt to the platform that you run
-          // the app on. For desktop platforms, the controls will be smaller and
-          // closer together (more dense) than on mobile platforms.
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        initialRoute: Load.id,
-        routes: {
-          Home.id: (context) => Home(),
-          ArticleView.id: (context) => ArticleView(),
-          Settings.id: (context) => Settings(),
-          NewSearch.id: (context) => NewSearch(),
-          RetrySearch.id: (context) => RetrySearch(),
-          Load.id: (context) => Load(),
-          Bookmarks.id: (context) => Bookmarks()
+    return DynamicTheme(
+        defaultBrightness: Brightness.light,
+        data: (brightness) => ThemeData(
+              primarySwatch: Colors.indigo,
+              brightness: brightness,
+            ),
+        themedWidgetBuilder: (context, theme) {
+          return MaterialApp(
+              title: 'Flutter Demo',
+              theme: theme,
+              initialRoute: Load.id,
+              routes: {
+                Home.id: (context) => Home(),
+                ArticleView.id: (context) => ArticleView(),
+                Settings.id: (context) => Settings(),
+                NewSearch.id: (context) => NewSearch(),
+                RetrySearch.id: (context) => RetrySearch(),
+                Load.id: (context) => Load(),
+                Bookmarks.id: (context) => Bookmarks()
+              });
         });
   }
 }
